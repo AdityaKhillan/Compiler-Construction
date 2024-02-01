@@ -33,17 +33,67 @@ Declared new tokens for ? and : and editted src/lexer.lex to add support to thes
   
 This project is about building an end-to-end compiler for the rudimentary language. We are to add named functions (with recursion and composition) and the if-then-else block. Certain architecture-independent optimizations is also added. 
 
-# Types
+# 3. Types
 
 Added support for types. The compiler works for short (16-bit), int (32-bit), and long (64-bit)datatypes. Smaller types are able to fit into bigger types, and a bigger type should not be able to fit into smaller
 types. Arithmetic operations can handle type coercion correctly, result of an arithmetic operation between two different types is always the larger type.
   
-# Control Flow
+# 4. Control Flow
   
 Added support for if statements. Note that every if statement has an else statement attached to it. Braces are also mandatory. Scoping issues are handled when implementing the block of the if statement.
   
-# Functions
+# 5. Functions
   
 Added function support to the language.
+Functions should follow this syntax:
+
+```
+fun add(a : int, b : long) : long {
+  ret a + b;
+}
+```
+
+If there are no return statements, a function by default returns 0.
   
-# Optimizations
+# 6. Optimizations
+
+These optimizations should run just after parsing and before code generation, i.e. optimizations are performed on the AST. After the compiler is done with the optimizations, it should write the optimized AST into a text file called opt.txt in the bin directory of the project
+
+Constant Folding - 
+
+Operations that involve only literals, should be folded into one constant. The following code:
+
+```let b: int = 3 * 4 + 5 - 6;```
+
+has the following AST:
+
+```(let (b int) (- (+ (* 3 4)) 6))```
+
+After doing constant folding you should get:
+
+```(let (b int) 11)```
+
+Branch Elimination - 
+
+Remove branches of the if statement that are never reached. For example, here the if condition is always zero, and the if branch is never executed.
+
+```
+if 0 {
+dbg a;
+} else {
+dbg b;
+}
+```
+
+has the AST:
+
+```
+(if-else 0
+(dbg a)
+(dbg b)
+)
+```
+
+After doing branch elimination, the AST should look like:
+
+```(dbg b)```
